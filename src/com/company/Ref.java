@@ -11,7 +11,7 @@ public class Ref {
     public static final int FLOOR_HEIGHT = 50;
     public static final int NET_HEIGHT = 340;
     public static final Color POINTS_COLOR = new Color(215, 103, 58);
-    public static final Color PLAYER_COLOR = new Color(215, 0, 5);
+    public static final Color PLAYER_COLOR = new Color(215, 6, 0);
     public static final Color BALL_COLOR = new Color(0, 175, 29);
     public static final double PLAYER_GRAVITY = 0.1;
     public static final double BALL_GRAVITY = 0.08;
