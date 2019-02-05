@@ -1,5 +1,9 @@
 package com.company;
 
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -32,8 +36,7 @@ public class GamePlay extends JPanel {
     private Image net;
     private Image reset;
 
-    //private MediaPlayer mediaPlayer = new MediaPlayer(new Media(new File("sounds/hit.mp3").toURI().toString()));
-
+    private AudioHandler audio;
     /**
      * This timer run all those method like collision handlers every frame. At the end it's repaint frame.
      */
@@ -66,6 +69,8 @@ public class GamePlay extends JPanel {
         this.setMinimumSize(SCREEN_DIMENSION);
         this.setPreferredSize(SCREEN_DIMENSION);
         this.setMaximumSize(SCREEN_DIMENSION);
+
+        audio = new AudioHandler(null, null);
 
         try {
             sand = ImageIO.read(new File("graphics/environment/sand.png"));
@@ -226,6 +231,8 @@ public class GamePlay extends JPanel {
         double distance = Math.sqrt(Math.pow(ballPosX - playerPosX, 2) + Math.pow(ballPosY - playerPosY, 2));
 
         if(distance < PLAYER_R + BALL_R) {
+            audio.playHit();
+
             player.setContact(player.getContact() + 1);
 
             if(player.equals(player1))
@@ -281,10 +288,12 @@ public class GamePlay extends JPanel {
     private void handleBallCollision(Ball b) {
         //walls
         if(b.getPosX() < 0) {
+            audio.playHit();
             b.setPosX(0);
             b.setxSpeed(-b.getxSpeed());
         }
         else if(b.getPosX() + BALL_R * 2 > SCREEN_DIMENSION.getWidth()) {
+            audio.playHit();
             b.setPosX(SCREEN_DIMENSION.getWidth() - BALL_R * 2);
             b.setxSpeed(-b.getxSpeed());
         }
@@ -309,25 +318,30 @@ public class GamePlay extends JPanel {
 
         if(centerY > NET_RECTANGLE.y) {
             if(Math.abs(centerX - NET_RECTANGLE.x) < BALL_R) {
+                audio.playHit();
                 b.setPosX(NET_RECTANGLE.x - BALL_R * 2);
                 b.setxSpeed( -b.getxSpeed() );
             }
             else if(Math.abs(centerX - NET_RECTANGLE.x - NET_RECTANGLE.width) < BALL_R) {
+                audio.playHit();
                 b.setPosX(NET_RECTANGLE.x + NET_RECTANGLE.width);
                 b.setxSpeed( -b.getxSpeed() );
             }
         }
         else if(centerX > NET_RECTANGLE.x && centerX < NET_RECTANGLE.x + NET_RECTANGLE.width && Math.abs(centerY - NET_RECTANGLE.y) < BALL_R) {
+            audio.playHit();
             b.setPosY(NET_RECTANGLE.y - BALL_R * 2);
             b.setySpeed( -b.getySpeed() );
         }
         else if(Math.sqrt(Math.pow(centerX - NET_RECTANGLE.x, 2) + Math.pow(centerY - NET_RECTANGLE.y, 2)) < BALL_R) {
+            audio.playHit();
             double speed = Math.abs(b.getySpeed()) + Math.abs(b.getxSpeed());
             double angle = Math.atan((centerY - NET_RECTANGLE.y) / (centerX - NET_RECTANGLE.x));
             b.setxSpeed(-Math.abs(speed * Math.cos(angle)));
             b.setySpeed(-Math.abs(speed * Math.sin(angle)));
         }
         else if(Math.sqrt(Math.pow(centerX - NET_RECTANGLE.x - NET_RECTANGLE.width, 2) + Math.pow(centerY - NET_RECTANGLE.y, 2)) < BALL_R) {
+            audio.playHit();
             double speed = Math.abs(b.getySpeed()) + Math.abs(b.getxSpeed());
             double angle = Math.atan((centerY - NET_RECTANGLE.y) / (centerX - NET_RECTANGLE.x - NET_RECTANGLE.width));
             b.setxSpeed(Math.abs(speed * Math.cos(angle)));
