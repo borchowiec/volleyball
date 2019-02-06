@@ -409,4 +409,13 @@ public class GamePlay extends JPanel {
             player.setPosX(NET_RECTANGLE.x + NET_RECTANGLE.width);
 
     }
+
+    public static void newGamePlay(Face face1, Face face2) {
+        JFrame frame = new JFrame("Volleyball");
+
+        frame.add(new GamePlay(face1, face2));
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
 }
