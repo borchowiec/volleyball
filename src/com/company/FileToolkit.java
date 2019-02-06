@@ -23,12 +23,16 @@ public class FileToolkit {
             faces[i] = facesAR.get(i);
         }
 
-        System.out.println(facesAR.size());
-
         return faces;
     }
 
     private static boolean isFaceDirectory(File f) {
-        return new File(f + File.separator + "img.png").exists();
+        if(!new File(f + File.separator + "img.png").exists())
+            return false;
+        if(!new File(f + File.separator + "animation").exists())
+            return false;
+        if(new File(f + File.separator + "animation").listFiles().length == 0)
+            return false;
+        return true;
     }
 }

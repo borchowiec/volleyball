@@ -15,7 +15,8 @@ public class Player {
     private int points = 0;
     private int contact = 0;
     private boolean isFaceReversed = false;
-    private final Face face;
+    public final Face face;
+    private boolean gotPoint = false;
 
     public Player(double posX, double posY, Face face) {
         this.posX = posX;
@@ -65,6 +66,14 @@ public class Player {
 
     public void setRightPressed(boolean rightPressed) {
         this.rightPressed = rightPressed;
+    }
+
+    public boolean isGotPoint() {
+        return gotPoint;
+    }
+
+    public void setGotPoint(boolean gotPoint) {
+        this.gotPoint = gotPoint;
     }
 
     /**

@@ -157,10 +157,16 @@ public class GamePlay extends JPanel {
         g.drawImage(sand, 0, SCREEN_DIMENSION.height - sand.getHeight(null), null);
 
         //player1
-        g.drawImage(player1.getFace(), (int) player1.getPosX(), (int) player1.getPosY(), null);
+        if(!isPlaying && player1.isGotPoint())
+            g.drawImage(player1.face.getAnimationFrame(), (int) player1.getPosX(), (int) player1.getPosY(), null);
+        else
+            g.drawImage(player1.getFace(), (int) player1.getPosX(), (int) player1.getPosY(), null);
 
         //player2
-        g.drawImage(player2.getFace(), (int) player2.getPosX(), (int) player2.getPosY(), null);
+        if(!isPlaying && player2.isGotPoint())
+            g.drawImage(player2.face.getAnimationFrame(), (int) player2.getPosX(), (int) player2.getPosY(), null);
+        else
+            g.drawImage(player2.getFace(), (int) player2.getPosX(), (int) player2.getPosY(), null);
 
         //ball
         g.setColor(BALL_COLOR);
@@ -354,12 +360,14 @@ public class GamePlay extends JPanel {
 
         if(player == 2) {
             player2.incrementPoints();
+            player2.setGotPoint(true);
             new java.util.Timer().schedule(
                     new java.util.TimerTask() {
                         @Override
                         public void run() {
                             ball = new Ball(SCREEN_DIMENSION.width - 100 - BALL_R * 2, 10);
                             isPlaying = true;
+                            player2.setGotPoint(false);
                         }
                     },
                     DELAY
@@ -367,12 +375,14 @@ public class GamePlay extends JPanel {
         }
         else if(player == 1) {
             player1.incrementPoints();
+            player1.setGotPoint(true);
             new java.util.Timer().schedule(
                     new java.util.TimerTask() {
                         @Override
                         public void run() {
                             ball = new Ball(100, 10);
                             isPlaying = true;
+                            player1.setGotPoint(false);
                         }
                     },
                     DELAY
