@@ -1,5 +1,7 @@
 package com.company;
 
+import java.awt.*;
+
 /**
  * This class represents player.
  */
@@ -12,10 +14,13 @@ public class Player {
     private boolean rightPressed = false;
     private int points = 0;
     private int contact = 0;
+    private boolean isFaceReversed = false;
+    private final Face face;
 
-    public Player(double posX, double posY) {
+    public Player(double posX, double posY, Face face) {
         this.posX = posX;
         this.posY = posY;
+        this.face = face;
     }
 
     public double getPosX() {
@@ -66,10 +71,14 @@ public class Player {
      * This method moves player. Should be ran every frame.
      */
     public void move() {
-        if(leftPressed)
+        if(leftPressed) {
             posX -= Ref.MOVEMENT;
-        if(rightPressed)
+            isFaceReversed = true;
+        }
+        if(rightPressed) {
             posX += Ref.MOVEMENT;
+            isFaceReversed = false;
+        }
         if(upPressed && (posY + Ref.PLAYER_R * 2 >= Ref.SCREEN_DIMENSION.getHeight() - Ref.FLOOR_HEIGHT))
             ySpeed -= Ref.JUMP_STRENGTH;
 
@@ -90,5 +99,11 @@ public class Player {
 
     public void setContact(int contact) {
         this.contact = contact;
+    }
+
+    public Image getFace() {
+        if(!isFaceReversed)
+            return face.MAIN_FACE;
+        return face.MAIN_FACE_R;
     }
 }

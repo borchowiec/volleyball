@@ -1,9 +1,5 @@
 package com.company;
 
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -65,7 +61,7 @@ public class GamePlay extends JPanel {
      */
     private boolean isPlaying = true;
 
-    public GamePlay() {
+    public GamePlay(Face face1, Face face2) {
         this.setMinimumSize(SCREEN_DIMENSION);
         this.setPreferredSize(SCREEN_DIMENSION);
         this.setMaximumSize(SCREEN_DIMENSION);
@@ -81,7 +77,7 @@ public class GamePlay extends JPanel {
             e.printStackTrace();
         }
 
-        reset();
+        reset(face1, face2);
 
         this.addKeyListener(new KeyAdapter() {
             @Override
@@ -123,7 +119,7 @@ public class GamePlay extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(e.getX() >= RESET_BUTTON.x && e.getX() <= RESET_BUTTON.x + RESET_BUTTON.width && e.getY() >= RESET_BUTTON.y && e.getY() <= RESET_BUTTON.y + RESET_BUTTON.height)
-                    reset();
+                    reset(face1, face2);
             }
         });
 
@@ -135,9 +131,9 @@ public class GamePlay extends JPanel {
     /**
      * This method resets game. Creates new players and ball etc.
      */
-    private void reset() {
-        player1 = new Player(40, 600);
-        player2 = new Player(SCREEN_DIMENSION.width - 40 - PLAYER_R * 2, 600);
+    private void reset(Face face1, Face face2) {
+        player1 = new Player(40, 600, face1);
+        player2 = new Player(SCREEN_DIMENSION.width - 40 - PLAYER_R * 2, 600, face2);
 
         if((new Random()).nextBoolean())
             ball = new Ball(100, 10);
@@ -161,12 +157,10 @@ public class GamePlay extends JPanel {
         g.drawImage(sand, 0, SCREEN_DIMENSION.height - sand.getHeight(null), null);
 
         //player1
-        g.setColor(PLAYER_COLOR);
-        g.fillOval((int) player1.getPosX(), (int) player1.getPosY(), PLAYER_R * 2, PLAYER_R * 2);
+        g.drawImage(player1.getFace(), (int) player1.getPosX(), (int) player1.getPosY(), null);
 
         //player2
-        g.setColor(PLAYER_COLOR);
-        g.fillOval((int) player2.getPosX(), (int) player2.getPosY(), PLAYER_R * 2, PLAYER_R * 2);
+        g.drawImage(player2.getFace(), (int) player2.getPosX(), (int) player2.getPosY(), null);
 
         //ball
         g.setColor(BALL_COLOR);
