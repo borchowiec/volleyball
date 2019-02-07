@@ -22,6 +22,7 @@ public class GamePlay extends JPanel {
     public final Rectangle NET_RECTANGLE = new Rectangle((SCREEN_DIMENSION.width - 50)/2, SCREEN_DIMENSION.height - NET_HEIGHT - FLOOR_HEIGHT, 50, NET_HEIGHT);
 
     public final Rectangle RESET_BUTTON = new Rectangle(SCREEN_DIMENSION.width - 40, SCREEN_DIMENSION.height - 40, 35,35);
+    public final Rectangle MENU_BUTTON = new Rectangle(SCREEN_DIMENSION.width - 120, SCREEN_DIMENSION.height - 40, 70,35);
 
     private Player player1;
     private Player player2;
@@ -31,6 +32,7 @@ public class GamePlay extends JPanel {
     private Image bg;
     private Image net;
     private Image reset;
+    private Image menu;
 
     private AudioHandler audio;
     /**
@@ -73,6 +75,7 @@ public class GamePlay extends JPanel {
             bg = ImageIO.read(new File("graphics/environment/bg.png"));
             net = ImageIO.read(new File("graphics/environment/net.png"));
             reset = ImageIO.read(new File("graphics/environment/reset.png"));
+            menu = ImageIO.read(new File("graphics/environment/menu.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -126,12 +129,23 @@ public class GamePlay extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if(e.getX() >= RESET_BUTTON.x && e.getX() <= RESET_BUTTON.x + RESET_BUTTON.width && e.getY() >= RESET_BUTTON.y && e.getY() <= RESET_BUTTON.y + RESET_BUTTON.height)
                     reset(face1, face2);
+                else if(e.getX() >= MENU_BUTTON.x && e.getX() <= MENU_BUTTON.x + MENU_BUTTON.width && e.getY() >= MENU_BUTTON.y && e.getY() <= MENU_BUTTON.y + MENU_BUTTON.height) {
+                    new Main();
+                    dispose();
+                }
             }
         });
 
         this.setFocusable(true);
 
         timer.start();
+    }
+
+    private void dispose() {
+        timer.stop();
+        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        topFrame.removeAll();
+        topFrame.dispose();
     }
 
     /**
@@ -186,6 +200,9 @@ public class GamePlay extends JPanel {
 
         //reset button
         g.drawImage(reset, RESET_BUTTON.x, RESET_BUTTON.y, null);
+
+        //menu button
+        g.drawImage(menu, MENU_BUTTON.x, MENU_BUTTON.y, null);
 
         //points
         g.setColor(POINTS_COLOR);
