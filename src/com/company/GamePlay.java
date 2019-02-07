@@ -34,9 +34,10 @@ public class GamePlay extends JPanel {
     private Image reset;
     private Image menu;
 
-    private AudioHandler audio;
+    private MechanicsHandler mechanics;
+
     /**
-     * This timer run all those method like collision handlers every frame. At the end it's repaint frame.
+     * This timer run all those method like collision handlers, every frame. Repaints frame.
      */
     private Timer timer = new Timer(8, e -> {
         ball.setySpeed(ball.getySpeed() + BALL_GRAVITY);
@@ -47,39 +48,25 @@ public class GamePlay extends JPanel {
         player1.move();
         player2.move();
 
-        handlePlayerBallCollision(ball, player1);
-        handlePlayerBallCollision(ball, player2);
+        mechanics.handlePlayerBallCollision(ball, player1);
+        mechanics.handlePlayerBallCollision(ball, player2);
 
-        handleBallCollision(ball);
+        mechanics.handleBallCollision(ball);
 
-        handlePlayersCollisions(player1);
-        handlePlayersCollisions(player2);
+        mechanics.handlePlayersCollisions(player1);
+        mechanics.handlePlayersCollisions(player2);
 
         repaint();
     });
-
-    /**
-     * When the game is going on
-     */
-    private boolean isPlaying = true;
 
     public GamePlay(Face face1, Face face2) {
         this.setMinimumSize(SCREEN_DIMENSION);
         this.setPreferredSize(SCREEN_DIMENSION);
         this.setMaximumSize(SCREEN_DIMENSION);
 
-        audio = new AudioHandler(null, null);
+        mechanics = new MechanicsHandler(this);
 
-        try {
-            sand = ImageIO.read(new File("graphics/environment/sand.png"));
-            bg = ImageIO.read(new File("graphics/environment/bg.png"));
-            net = ImageIO.read(new File("graphics/environment/net.png"));
-            reset = ImageIO.read(new File("graphics/environment/reset.png"));
-            menu = ImageIO.read(new File("graphics/environment/menu.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        loadImages();
         reset(face1, face2);
 
         this.addKeyListener(new KeyAdapter() {
@@ -141,6 +128,18 @@ public class GamePlay extends JPanel {
         timer.start();
     }
 
+    private void loadImages() {
+        try {
+            sand = ImageIO.read(new File("graphics/environment/sand.png"));
+            bg = ImageIO.read(new File("graphics/environment/bg.png"));
+            net = ImageIO.read(new File("graphics/environment/net.png"));
+            reset = ImageIO.read(new File("graphics/environment/reset.png"));
+            menu = ImageIO.read(new File("graphics/environment/menu.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void dispose() {
         timer.stop();
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -160,33 +159,20 @@ public class GamePlay extends JPanel {
         else
             ball = new Ball(SCREEN_DIMENSION.width - 100 - BALL_R * 2, 10);
 
-        isPlaying = true;
+        mechanics.setPlaying(true);
     }
 
     @Override
     public void paint(Graphics g) {
         ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        //bg
+        //environment
         g.drawImage(bg,0,0,null);
-
-        //net
         g.drawImage(net, NET_RECTANGLE.x, NET_RECTANGLE.y, null);
-
-        //floor
         g.drawImage(sand, 0, SCREEN_DIMENSION.height - sand.getHeight(null), null);
 
-        //player1
-        if(!isPlaying && player1.isGotPoint())
-            g.drawImage(player1.face.getAnimationFrame(), (int) player1.getPosX(), (int) player1.getPosY(), null);
-        else
-            g.drawImage(player1.getFace(), (int) player1.getPosX(), (int) player1.getPosY(), null);
-
-        //player2
-        if(!isPlaying && player2.isGotPoint())
-            g.drawImage(player2.face.getAnimationFrame(), (int) player2.getPosX(), (int) player2.getPosY(), null);
-        else
-            g.drawImage(player2.getFace(), (int) player2.getPosX(), (int) player2.getPosY(), null);
+        player1.paint(g, mechanics.isPlaying());
+        player2.paint(g, mechanics.isPlaying());
 
         //ball
         g.setColor(BALL_COLOR);
@@ -198,10 +184,8 @@ public class GamePlay extends JPanel {
             g.fillRect((int) (ball.getPosX() + BALL_R - 10), 0, 20, 10);
         }
 
-        //reset button
+        //buttons
         g.drawImage(reset, RESET_BUTTON.x, RESET_BUTTON.y, null);
-
-        //menu button
         g.drawImage(menu, MENU_BUTTON.x, MENU_BUTTON.y, null);
 
         //points
@@ -241,206 +225,16 @@ public class GamePlay extends JPanel {
         }
     }
 
-    /**
-     * This method check if <code>ball</code> and <code>player</code> collide and if so, it handle this collision.
-     * @param ball
-     * @param player
-     */
-    private void handlePlayerBallCollision(Ball ball, Player player) {
-        double ballPosX = ball.getPosX() + BALL_R;
-        double ballPosY = ball.getPosY() + BALL_R;
-        double playerPosX = player.getPosX() + PLAYER_R;
-        double playerPosY = player.getPosY() + PLAYER_R;
-        double distance = Math.sqrt(Math.pow(ballPosX - playerPosX, 2) + Math.pow(ballPosY - playerPosY, 2));
-
-        if(distance < PLAYER_R + BALL_R) {
-            audio.playHit();
-
-            player.setContact(player.getContact() + 1);
-
-            if(player.equals(player1))
-                player2.setContact(0);
-            else
-                player1.setContact(0);
-
-            if(player.getContact() == 4 && isPlaying) {
-                if(player.equals(player1))
-                    point(2);
-                else
-                    point(1);
-            }
-
-            double angle = Math.toDegrees(Math.atan((ballPosY - playerPosY) / (ballPosX - playerPosX)));
-            double speed = (Math.abs(ball.getySpeed()) + Math.abs(ball.getxSpeed())) * 0.98;
-
-            if(player.isLeftPressed() || player.isRightPressed())
-                speed += MOVEMENT * (1 - Math.abs(angle) / 90);
-
-            if (ballPosX < playerPosX)
-                player.setPosX(ballPosX + Math.cos(Math.toRadians(Math.abs(angle))) * (PLAYER_R + BALL_R) - PLAYER_R);
-            else
-                player.setPosX(ballPosX - Math.cos(Math.toRadians(Math.abs(angle))) * (PLAYER_R + BALL_R) - PLAYER_R);
-
-            if(ballPosY < playerPosY) {
-
-                player.setPosY(ballPosY + Math.sin(Math.toRadians(Math.abs(angle))) * (PLAYER_R + BALL_R) - PLAYER_R);
-
-                ball.setySpeed(speed * (-Math.abs(angle) / 90));
-                if(angle > 0)
-                    ball.setxSpeed(-speed * (1 - Math.abs(angle) / 90));
-                else
-                    ball.setxSpeed(speed * (1 - Math.abs(angle) / 90));
-
-            }
-            else {
-                player.setPosY(ballPosY - Math.sin(Math.toRadians(Math.abs(angle))) * (PLAYER_R + BALL_R) - PLAYER_R);
-
-                ball.setySpeed(speed * (Math.abs(angle) / 90));
-                if(angle > 0)
-                    ball.setxSpeed(speed * (1 - Math.abs(angle) / 90));
-                else
-                    ball.setxSpeed(-speed * (1 - Math.abs(angle) / 90));
-            }
-        }
+    public Player getPlayer1() {
+        return player1;
     }
 
-    /**
-     * This method check <code>ball</code> collide with environment and if so, it handle this collision.
-     * @param b ball
-     */
-    private void handleBallCollision(Ball b) {
-        //walls
-        if(b.getPosX() < 0) {
-            audio.playHit();
-            b.setPosX(0);
-            b.setxSpeed(-b.getxSpeed());
-        }
-        else if(b.getPosX() + BALL_R * 2 > SCREEN_DIMENSION.getWidth()) {
-            audio.playHit();
-            b.setPosX(SCREEN_DIMENSION.getWidth() - BALL_R * 2);
-            b.setxSpeed(-b.getxSpeed());
-        }
-
-        //floor
-        if(b.getPosY() + BALL_R * 2 > FLOOR_RECTANGLE.y) {
-            b.setPosY(FLOOR_RECTANGLE.y - BALL_R * 2);
-            b.setySpeed( -b.getySpeed() / 2);
-            b.setxSpeed( b.getxSpeed() * 0.9);
-
-            if(isPlaying) {
-                if (b.getPosX() < SCREEN_DIMENSION.getWidth() / 2)
-                    point(2);
-                else
-                    point(1);
-            }
-        }
-
-        //net
-        double centerX = b.getPosX() + BALL_R;
-        double centerY = b.getPosY() + BALL_R;
-
-        if(centerY > NET_RECTANGLE.y) {
-            if(Math.abs(centerX - NET_RECTANGLE.x) < BALL_R) {
-                audio.playHit();
-                b.setPosX(NET_RECTANGLE.x - BALL_R * 2);
-                b.setxSpeed( -b.getxSpeed() );
-            }
-            else if(Math.abs(centerX - NET_RECTANGLE.x - NET_RECTANGLE.width) < BALL_R) {
-                audio.playHit();
-                b.setPosX(NET_RECTANGLE.x + NET_RECTANGLE.width);
-                b.setxSpeed( -b.getxSpeed() );
-            }
-        }
-        else if(centerX > NET_RECTANGLE.x && centerX < NET_RECTANGLE.x + NET_RECTANGLE.width && Math.abs(centerY - NET_RECTANGLE.y) < BALL_R) {
-            audio.playHit();
-            b.setPosY(NET_RECTANGLE.y - BALL_R * 2);
-            b.setySpeed( -b.getySpeed() );
-        }
-        else if(Math.sqrt(Math.pow(centerX - NET_RECTANGLE.x, 2) + Math.pow(centerY - NET_RECTANGLE.y, 2)) < BALL_R) {
-            audio.playHit();
-            double speed = Math.abs(b.getySpeed()) + Math.abs(b.getxSpeed());
-            double angle = Math.atan((centerY - NET_RECTANGLE.y) / (centerX - NET_RECTANGLE.x));
-            b.setxSpeed(-Math.abs(speed * Math.cos(angle)));
-            b.setySpeed(-Math.abs(speed * Math.sin(angle)));
-        }
-        else if(Math.sqrt(Math.pow(centerX - NET_RECTANGLE.x - NET_RECTANGLE.width, 2) + Math.pow(centerY - NET_RECTANGLE.y, 2)) < BALL_R) {
-            audio.playHit();
-            double speed = Math.abs(b.getySpeed()) + Math.abs(b.getxSpeed());
-            double angle = Math.atan((centerY - NET_RECTANGLE.y) / (centerX - NET_RECTANGLE.x - NET_RECTANGLE.width));
-            b.setxSpeed(Math.abs(speed * Math.cos(angle)));
-            b.setySpeed(-Math.abs(speed * Math.sin(angle)));
-        }
+    public Player getPlayer2() {
+        return player2;
     }
 
-    /**
-     * If player get point, it handle it.
-     * @param player number of player. 1 - player1, 2 - player2. If you send other number Exception will be thrown.
-     */
-    private void point(int player) {
-        final int DELAY = 2000;
-
-        isPlaying = false;
-
-        if(player == 2) {
-            player2.incrementPoints();
-            player2.setGotPoint(true);
-            new java.util.Timer().schedule(
-                    new java.util.TimerTask() {
-                        @Override
-                        public void run() {
-                            ball = new Ball(SCREEN_DIMENSION.width - 100 - BALL_R * 2, 10);
-                            isPlaying = true;
-                            player2.setGotPoint(false);
-                        }
-                    },
-                    DELAY
-            );
-        }
-        else if(player == 1) {
-            player1.incrementPoints();
-            player1.setGotPoint(true);
-            new java.util.Timer().schedule(
-                    new java.util.TimerTask() {
-                        @Override
-                        public void run() {
-                            ball = new Ball(100, 10);
-                            isPlaying = true;
-                            player1.setGotPoint(false);
-                        }
-                    },
-                    DELAY
-            );
-        }
-        else
-            throw new IllegalArgumentException();
-
-        player1.setContact(0);
-        player2.setContact(0);
-    }
-
-    /**
-     * This method check if <code>player</code> collide with environment and if so, it handle this collision.
-     * @param player
-     */
-    private void handlePlayersCollisions(Player player) {
-        //walls
-        if(player.getPosX() < 0)
-            player.setPosX(0);
-        else if(player.getPosX() + PLAYER_R * 2 > SCREEN_DIMENSION.getWidth())
-            player.setPosX(SCREEN_DIMENSION.getWidth() - PLAYER_R * 2);
-
-        //floor
-        if(player.getPosY() + PLAYER_R * 2 > SCREEN_DIMENSION.getHeight() - FLOOR_HEIGHT) {
-            player.setYSpeed(0);
-            player.setPosY(SCREEN_DIMENSION.getHeight() - FLOOR_HEIGHT - PLAYER_R * 2);
-        }
-
-        //net
-        if(player.getPosX() < NET_RECTANGLE.x && player.getPosX() + PLAYER_R * 2 > NET_RECTANGLE.x)
-            player.setPosX(NET_RECTANGLE.x - PLAYER_R * 2);
-        else if(player.getPosX() + PLAYER_R * 2 > NET_RECTANGLE.x && player.getPosX() < NET_RECTANGLE.x + NET_RECTANGLE.width)
-            player.setPosX(NET_RECTANGLE.x + NET_RECTANGLE.width);
-
+    public void setBall(Ball ball) {
+        this.ball = ball;
     }
 
     public static void newGamePlay(Face face1, Face face2) {

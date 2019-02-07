@@ -115,4 +115,11 @@ public class Player {
             return face.MAIN_FACE;
         return face.MAIN_FACE_R;
     }
+
+    public void paint(Graphics g, boolean isPlaying) {
+        if(!isPlaying && gotPoint)
+            g.drawImage(face.getAnimationFrame(), (int) posX, (int) posY, null);
+        else
+            g.drawImage(getFace(), (int) posX, (int) posY, null);
+    }
 }
