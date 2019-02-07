@@ -11,7 +11,6 @@ public class Main extends JFrame {
      * This constructor create choose frame.
      */
     public Main() {
-
         new ChooseFrame();
     }
 

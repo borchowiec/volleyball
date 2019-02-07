@@ -95,6 +95,12 @@ public class GamePlay extends JPanel {
                     player2.setLeftPressed(true);
                 else if(keyCode == P2_RIGHT)
                     player2.setRightPressed(true);
+                else if(keyCode == KeyEvent.VK_P) {
+                    if(timer.isRunning())
+                        timer.stop();
+                    else
+                        timer.start();
+                }
             }
 
             @Override
@@ -426,6 +432,11 @@ public class GamePlay extends JPanel {
         frame.add(new GamePlay(face1, face2));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
+
+        int width = Toolkit.getDefaultToolkit().getScreenSize().width;
+        int height = Toolkit.getDefaultToolkit().getScreenSize().height;
+        frame.setLocation((width - frame.getWidth()) / 2, (height - frame.getHeight()) / 2);
+
         frame.setVisible(true);
     }
 }

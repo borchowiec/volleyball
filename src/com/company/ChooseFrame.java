@@ -27,6 +27,11 @@ public class ChooseFrame extends JFrame {
         initComponents();
 
         this.pack();
+
+        int width = Toolkit.getDefaultToolkit().getScreenSize().width;
+        int height = Toolkit.getDefaultToolkit().getScreenSize().height;
+        this.setLocation((width - this.getWidth()) / 2, (height - this.getHeight()) / 2);
+
         this.setVisible(true);
     }
 
