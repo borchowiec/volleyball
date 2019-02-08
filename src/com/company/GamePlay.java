@@ -1,5 +1,10 @@
 package com.company;
 
+import com.company.elements.Ball;
+import com.company.elements.Face;
+import com.company.elements.Player;
+import com.company.logic.MechanicsHandler;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;

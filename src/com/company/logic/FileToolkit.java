@@ -1,4 +1,6 @@
-package com.company;
+package com.company.logic;
+
+import com.company.elements.Face;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.company;
+package com.company.elements;
 
 /**
  * This class represents ball. Should be created only one instance of this class.

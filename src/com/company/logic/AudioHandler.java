@@ -1,4 +1,4 @@
-package com.company;
+package com.company.logic;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.Media;

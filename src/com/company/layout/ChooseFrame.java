@@ -1,4 +1,8 @@
-package com.company;
+package com.company.layout;
+
+import com.company.GamePlay;
+import com.company.elements.Face;
+import com.company.logic.FileToolkit;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;

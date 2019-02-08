@@ -1,4 +1,8 @@
-package com.company;
+package com.company.logic;
+
+import com.company.GamePlay;
+import com.company.elements.Ball;
+import com.company.elements.Player;
 
 import static com.company.Ref.*;
 

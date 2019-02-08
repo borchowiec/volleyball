@@ -1,4 +1,4 @@
-package com.company;
+package com.company.elements;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,9 +9,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class Face {
-    final Image MAIN_FACE;
-    final Image MAIN_FACE_R;
-    final Image[] ANIMATION;
+    public final Image MAIN_FACE;
+    public final Image MAIN_FACE_R;
+    public final Image[] ANIMATION;
 
     private int animationIt = 0;
     private int animationCurrentDelay = 0;

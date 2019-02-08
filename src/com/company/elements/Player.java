@@ -1,4 +1,6 @@
-package com.company;
+package com.company.elements;
+
+import com.company.Ref;
 
 import java.awt.*;
 
