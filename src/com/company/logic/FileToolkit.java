@@ -5,8 +5,15 @@ import com.company.elements.Face;
 import java.io.File;
 import java.util.ArrayList;
 
+/**
+ * This class contains methods that operate on files.
+ */
 public class FileToolkit {
 
+    /**
+     * This methods is looking for faces directories and returns list of instance of faces.
+     * @return Array that contains faces.
+     */
     public static Face[] getFaces() {
 
         File facesDirectory = new File("graphics/faces");
@@ -28,6 +35,11 @@ public class FileToolkit {
         return faces;
     }
 
+    /**
+     * This method checks if face directory has every important elements.
+     * @param f Directory of face.
+     * @return If everything is ok, returns true.
+     */
     private static boolean isFaceDirectory(File f) {
         if(!new File(f + File.separator + "img.png").exists())
             return false;

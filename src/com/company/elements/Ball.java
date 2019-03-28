@@ -1,7 +1,7 @@
 package com.company.elements;
 
 /**
- * This class represents ball. Should be created only one instance of this class.
+ * This class represents ball. Contains information about the state of the ball and contains methods to manipulate the ball.
  */
 public class Ball {
     private double posX;
@@ -9,6 +9,11 @@ public class Ball {
     private double ySpeed = 0;
     private double xSpeed = 0;
 
+    /**
+     * Main ball constructor.
+     * @param posX Start position x
+     * @param posY Start position y
+     */
     public Ball(double posX, double posY) {
         this.posX = posX;
         this.posY = posY;
@@ -47,10 +52,18 @@ public class Ball {
     }
 
     /**
-     * This method moves ball. Should be ran every frame.
+     * This method moves ball. Next position depends from current speed.
      */
     public void move() {
         posX += xSpeed;
         posY += ySpeed;
+    }
+
+    /**
+     * This method returns speed of ball in all dimensions. It's always absolute.
+     * @return Speed of ball.
+     */
+    public double getSpeed() {
+        return Math.abs(xSpeed) + Math.abs(ySpeed);
     }
 }

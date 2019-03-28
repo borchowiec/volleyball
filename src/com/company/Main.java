@@ -5,18 +5,10 @@ import com.company.layout.ChooseFrame;
 import javax.swing.*;
 
 /**
- * This class starts app. Create start frame.
+ * This class starts app
  */
-public class Main extends JFrame {
-
-    /**
-     * This constructor create choose frame.
-     */
-    public Main() {
-        new ChooseFrame();
-    }
-
+public class Main {
     public static void main(String[] args) {
-        new Main();
+        new ChooseFrame();
     }
 }

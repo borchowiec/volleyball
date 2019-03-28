@@ -3,6 +3,7 @@ package com.company;
 import com.company.elements.Ball;
 import com.company.elements.Face;
 import com.company.elements.Player;
+import com.company.layout.ChooseFrame;
 import com.company.logic.MechanicsHandler;
 
 import javax.imageio.ImageIO;
@@ -19,7 +20,7 @@ import java.util.Random;
 import static com.company.Ref.*;
 
 /**
- * This class is responsible for game mechanics. Every method to handle game like collision detecting or painting are here.
+ * This class contains every element of gameplay e.g. players, ball, environment.
  */
 public class GamePlay extends JPanel {
 
@@ -42,7 +43,7 @@ public class GamePlay extends JPanel {
     private MechanicsHandler mechanics;
 
     /**
-     * This timer run all those method like collision handlers, every frame. Repaints frame.
+     * This timer run all those method like collision handlers or repaints frame.
      */
     private Timer timer = new Timer(8, e -> {
         ball.setySpeed(ball.getySpeed() + BALL_GRAVITY);
@@ -64,6 +65,11 @@ public class GamePlay extends JPanel {
         repaint();
     });
 
+    /**
+     * Main constructor.
+     * @param face1 first player's face
+     * @param face2 second player's face
+     */
     public GamePlay(Face face1, Face face2) {
         this.setMinimumSize(SCREEN_DIMENSION);
         this.setPreferredSize(SCREEN_DIMENSION);
@@ -73,7 +79,34 @@ public class GamePlay extends JPanel {
 
         loadImages();
         reset(face1, face2);
+        initializeListeners(face1, face2);
 
+        this.setFocusable(true);
+
+        timer.start();
+    }
+
+    /**
+     * This method loads all important images.
+     */
+    private void loadImages() {
+        try {
+            sand = ImageIO.read(new File("graphics/environment/sand.png"));
+            bg = ImageIO.read(new File("graphics/environment/bg.png"));
+            net = ImageIO.read(new File("graphics/environment/net.png"));
+            reset = ImageIO.read(new File("graphics/environment/reset.png"));
+            menu = ImageIO.read(new File("graphics/environment/menu.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Initializes listeners
+     * @param face1 first player's face
+     * @param face2 second player's face
+     */
+    private void initializeListeners(Face face1, Face face2) {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -122,34 +155,22 @@ public class GamePlay extends JPanel {
                 if(e.getX() >= RESET_BUTTON.x && e.getX() <= RESET_BUTTON.x + RESET_BUTTON.width && e.getY() >= RESET_BUTTON.y && e.getY() <= RESET_BUTTON.y + RESET_BUTTON.height)
                     reset(face1, face2);
                 else if(e.getX() >= MENU_BUTTON.x && e.getX() <= MENU_BUTTON.x + MENU_BUTTON.width && e.getY() >= MENU_BUTTON.y && e.getY() <= MENU_BUTTON.y + MENU_BUTTON.height) {
-                    new Main();
+                    new ChooseFrame();
                     dispose();
                 }
             }
         });
-
-        this.setFocusable(true);
-
-        timer.start();
     }
 
-    private void loadImages() {
-        try {
-            sand = ImageIO.read(new File("graphics/environment/sand.png"));
-            bg = ImageIO.read(new File("graphics/environment/bg.png"));
-            net = ImageIO.read(new File("graphics/environment/net.png"));
-            reset = ImageIO.read(new File("graphics/environment/reset.png"));
-            menu = ImageIO.read(new File("graphics/environment/menu.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * This method dispose the game.
+     */
     private void dispose() {
         timer.stop();
         JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         topFrame.removeAll();
         topFrame.dispose();
+        timer = null;
     }
 
     /**
@@ -227,6 +248,9 @@ public class GamePlay extends JPanel {
             g.setColor(Color.MAGENTA);
             g.drawLine((int) centerX, (int) centerY, (int) player1.getPosX() + PLAYER_R, (int) player1.getPosY() + PLAYER_R);
             g.drawLine((int) centerX, (int) centerY, (int) player2.getPosX() + PLAYER_R, (int) player2.getPosY() + PLAYER_R);
+
+            //ball speed
+            g.drawString("" + ball.getSpeed(), (int) ball.getPosX(), (int) ball.getPosY());
         }
     }
 
@@ -242,17 +266,17 @@ public class GamePlay extends JPanel {
         this.ball = ball;
     }
 
+    /**
+     * Creates new gameplay and gameplay's frame
+     * @param face1 first player's face
+     * @param face2 second player's face
+     */
     public static void newGamePlay(Face face1, Face face2) {
         JFrame frame = new JFrame("Volleyball");
-
         frame.add(new GamePlay(face1, face2));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
-
-        int width = Toolkit.getDefaultToolkit().getScreenSize().width;
-        int height = Toolkit.getDefaultToolkit().getScreenSize().height;
-        frame.setLocation((width - frame.getWidth()) / 2, (height - frame.getHeight()) / 2);
-
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }

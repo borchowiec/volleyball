@@ -8,6 +8,9 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 
+/**
+ * This class represents frame, where you can choose which character you want to play.
+ */
 public class ChooseFrame extends JFrame {
     private JPanel mainFrame;
     private JLabel titleLabel;
@@ -23,22 +26,22 @@ public class ChooseFrame extends JFrame {
     private Face player1Face;
     private Face player2Face;
 
+    /**
+     * Main constructor. Initializes components.
+     */
     public ChooseFrame() {
         super("Volleyball");
         this.setContentPane(mainFrame);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         initComponents();
-
         this.pack();
-
-        int width = Toolkit.getDefaultToolkit().getScreenSize().width;
-        int height = Toolkit.getDefaultToolkit().getScreenSize().height;
-        this.setLocation((width - this.getWidth()) / 2, (height - this.getHeight()) / 2);
-
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 
+    /**
+     * Initializes components. Gets faces to choose.
+     */
     private void initComponents() {
         Face[] faces = FileToolkit.getFaces();
 

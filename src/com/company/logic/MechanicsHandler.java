@@ -6,24 +6,31 @@ import com.company.elements.Player;
 
 import static com.company.Ref.*;
 
+/**
+ * This class contains methods that are responsible for game's mechanics.
+ */
 public class MechanicsHandler {
 
     private AudioHandler audio;
     private GamePlay gamePlay;
 
     /**
-     * When the game is going on
+     * When the game is going on. If somebody gets point, false.
      */
     private boolean isPlaying = true;
 
+    /**
+     * Main constructor.
+     * @param gamePlay GamePlay on which the methods will be operated.
+     */
     public MechanicsHandler(GamePlay gamePlay) {
-        audio = new AudioHandler(null, null);
+        audio = new AudioHandler();
         this.gamePlay = gamePlay;
     }
 
     /**
      * This method check if <code>ball</code> and <code>player</code> collide and if so, it handle this collision.
-     * @param ball
+     * @param ball ball that can collide with player
      * @param player the player who is being checked
      */
     public void handlePlayerBallCollision(Ball ball, Player player) {
@@ -88,8 +95,8 @@ public class MechanicsHandler {
     }
 
     /**
-     * This method check <code>ball</code> collide with environment and if so, it handle this collision.
-     * @param b ball
+     * This method check if <code>ball</code> collide with environment (walls, net etc) and if so, it handle this collision.
+     * @param b ball that can collide with environment
      */
     public void handleBallCollision(Ball b) {
         //walls
@@ -156,8 +163,8 @@ public class MechanicsHandler {
     }
 
     /**
-     * This method check if <code>player</code> collide with environment and if so, it handle this collision.
-     * @param player
+     * This method check if <code>player</code> collide with environment (walls, net etc) and if so, it handle this collision.
+     * @param player player that can collide with environment
      */
     public void handlePlayersCollisions(Player player) {
         //walls
@@ -181,7 +188,7 @@ public class MechanicsHandler {
     }
 
     /**
-     * If player get point, it handle it.
+     * If player gets point, it handle it.
      * @param player number of player. 1 - player1, 2 - player2. If you send other number Exception will be thrown.
      */
     private void point(int player) {

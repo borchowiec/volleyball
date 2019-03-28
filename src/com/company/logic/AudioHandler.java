@@ -6,26 +6,35 @@ import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
 
+/**
+ * This class is responsible for sound effects.
+ */
 public class AudioHandler {
 
+    /**
+     * hit sound
+     */
     private Media hitMedia;
-    private MediaPlayer player1MP;
-    private MediaPlayer player2MP;
 
-    public AudioHandler(File player1Song, File player2Song) {
-
-        final JFXPanel fxPanel = new JFXPanel();
-
+    /**
+     * Main constructor
+     */
+    public AudioHandler() {
+        new JFXPanel();
         hitMedia = new Media(new File("sounds/hit.wav").toURI().toString());
-        //this.player1MP = new MediaPlayer(new Media(player1Song.toURI().toString()));
-        //this.player2MP = new MediaPlayer(new Media(player2Song.toURI().toString()));
-
     }
 
+    /**
+     * Play hit sound
+     */
     public void playHit() {
         playSound(hitMedia);
     }
 
+    /**
+     * This method plays sound effect
+     * @param media Sound that you want to play.
+     */
     private void playSound(Media media) {
         MediaPlayer mp = new MediaPlayer(media);
         mp.play();
